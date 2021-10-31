@@ -1,37 +1,38 @@
 package VCC.carproducer;
 
 import VCC.carproducer.Car.Car;
-import VCC.carproducer.Requirement.CarTypeMapper;
-import VCC.carproducer.Requirement.EngineType;
 import VCC.carproducer.Requirement.Requirement;
-import VCC.carproducer.Requirement.RequirementDoesNotMapToCarTypeException;
+import VCC.carproducer.Requirement.RequirementFactory;
 import VCC.carproducer.Validator.CarValidator;
 import VCC.carproducer.Validator.CarValidatorResultPrinter;
 
 public class CarProducer {
     public static void main(String[] args) {
         var carProducer = new CarProducer();
-        var stationWagonRequirement = new Requirement(5, 5, false, false, false, EngineType.ICE);
         var carValidator = new CarValidator();
+        var requirementFactory = new RequirementFactory(System.in, System.out);
 
-        Car stationWagon;
-        try {
-            stationWagon = carProducer.produce(stationWagonRequirement);
-        } catch (RequirementDoesNotMapToCarTypeException e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
-            return;
-        }
+        Requirement requirement = requirementFactory.create();
+        var car = carProducer.produce(requirement);
 
-        var result = carValidator.validate(stationWagonRequirement, stationWagon);
+        System.out.println(
+            String.format(
+                "Produced a %s with %d seats and engine type %s.",
+                car.getCarType().getName(), car.getSeatCount(),
+                car.getEngineType().getName()
+            )
+        );
+
+        var result = carValidator.validate(requirement, car);
         CarValidatorResultPrinter.printResult(result);
     }
 
-    public Car produce(Requirement requirement) throws RequirementDoesNotMapToCarTypeException
+    public Car produce(Requirement requirement)
     {
-        var mapper = new CarTypeMapper();
-        var carType = mapper.mapRequirementToCarType(requirement);
-
-        return new Car(carType, requirement.getEngineType(), requirement.getSeatCount());
+        return new Car(
+            requirement.getCarType(),
+            requirement.getEngineType(),
+            requirement.getSeatCount()
+        );
     }
 }

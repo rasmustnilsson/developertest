@@ -8,21 +8,14 @@ import VCC.carproducer.CarProducer;
 import VCC.carproducer.Car.CarType;
 import VCC.carproducer.Requirement.EngineType;
 import VCC.carproducer.Requirement.Requirement;
-import VCC.carproducer.Requirement.RequirementDoesNotMapToCarTypeException;
 
 public class CarProducerTest
 {
-    @Test(expected = RequirementDoesNotMapToCarTypeException.class)
-    public void testShouldThrowErrorWhenRequirementDoesNotMatchACarType() throws RequirementDoesNotMapToCarTypeException
-    {
-        var producer = new CarProducer();
-        producer.produce(new Requirement(1, 1, false, false, false, EngineType.BEV));
-    }
-
-    public void testShouldReturnExpectedCar() throws RequirementDoesNotMapToCarTypeException
+    @Test
+    public void testShouldReturnExpectedCar()
     {
         var expectedSeatCount = 8;
-        var requirement = new Requirement(5, expectedSeatCount, false, false, false, EngineType.BEV);
+        var requirement = new Requirement(CarType.SUV, expectedSeatCount, EngineType.BEV);
         var producer = new CarProducer();
 
         var car = producer.produce(requirement);
